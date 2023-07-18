@@ -1,0 +1,41 @@
+#!/bin/bash
+#script by Abi Darwish
+
+HUNT_IP=$(busybox wget -q -O /online/index.html ipv4.icanhazip.com && cat /online/index.html | busybox cut -d. -f1,2)
+
+clear
+echo " IP Hunter v2.1 by Abi Darwish"
+echo
+read -p "Have you turned off all VPNs? [y/n]: " VPNOFF
+if [[ $VPNOFF == "y" ]]; then
+    clear
+    echo " IP Hunter v2.1 by Abi Darwish"
+    echo
+    while true; do
+    if [[ ${HUNT_IP} == "113.211" ]]; then
+        clear
+        echo " IP Hunter v2.1 by Abi Darwish"
+        echo
+        echo "Successfully connected to ${publicIP}"
+        echo "You can turn on VPN now"
+        exit 0
+    fi
+    echo "Start hunting..."
+    sleep 1
+    publicIP=$(busybox wget -q -O /online/index.html ipv4.icanhazip.com && cat /online/index.html)
+    echo "Got ${publicIP}"
+    sleep 1
+    busybox wget -q -O /dev/null http://192.168.8.1:8989/cgi-bin/changeip.cgi
+    if [[ $? != 0 ]]; then
+        echo
+        echo "Error: your modem doesn't have AIO installed"
+        echo
+        exit 1
+    fi
+    echo "Hunting again in 15 seconds (press Ctrl+C to cancel)..."
+    sleep 15
+    echo
+    done
+else
+    exit 0
+fi
